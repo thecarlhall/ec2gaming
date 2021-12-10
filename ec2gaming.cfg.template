@@ -1,0 +1,6 @@
+ACCOUNT_ID="???"
+KEY_NAME="???"
+REGION="us-east-1"
+INSTANCE_TYPE="g4dn.xlarge"
+SPOT_PRICE_BUFFER="0.01"
+VPN_CLIENT="tunnelblick"

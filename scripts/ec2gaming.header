@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 cd "$(dirname "$0")" || exit
+
+if [[ ! -f ../ec2gaming.cfg ]]; then
+    echo "Unable to find configuration. Create a new config by copying ec2gaming.cfg.template."
+    exit 1
+fi
 source ../ec2gaming.cfg
 
 USERNAME=$(head -1 ../ec2gaming.auth)

@@ -1,6 +1,9 @@
 ec2gaming.auth
 ec2gaming.bat
+ec2gaming.cfg
 scripts/ec2gaming-permissionpolicy.json
 scripts/ec2gaming.ovpn
 scripts/ec2gaming.rdp
 
+tags
+*.pem

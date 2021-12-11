@@ -4,6 +4,16 @@ Provides command line tools that makes gaming on EC2 simple and reliable. Includ
 
 Full documentation is available on the [wiki](https://github.com/DanielThomas/ec2gaming/wiki). Based on [Larry Gadea's](http://lg.io/) excellent work.
 
+## Modifications in Fork
+
+Mostly minor additions and changes to help my workflow. Check the commit log for the little things.  
+
+**Check out [this other repo](https://github.com/thecarlhall/cloud-gaming-on-ec2-instances) for a simpler way to create your AMI.**
+
+1. Add scripts to describe the ec2gaming images, create a pem file, and start on-demand instance (rather than spot).
+2. Add CDK constructs to create infra instead of relying on scripts like `ec2gaming-start.sh` to handle that. Makes the infra easier to clean up and manage separately from commands.
+
+
 # Before you begin
 
 Follow the [first time configuration](https://github.com/DanielThomas/ec2gaming/wiki/First-time-configuration) steps. They help you setup the tools, and streamline creation of your personalized AMI.

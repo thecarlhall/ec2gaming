@@ -19,19 +19,13 @@ export class Ec2GamingStack extends Stack {
 		});
 
 		const securityGroup = new ec2.SecurityGroup(this, 'ec2gamingSecurityGroup', {
+			description: 'Allow remote access',
 			securityGroupName: 'ec2gaming',
 			vpc,
-			description: 'Allow RDP and NICE DCV access',
 		});
 
 		// RDP
 		securityGroup.connections.allowFrom(ec2.Peer.ipv4(props.allowInboundCidr), ec2.Port.tcp(3389));
-		// NICE DCV
-		securityGroup.connections.allowFrom(ec2.Peer.ipv4(props.allowInboundCidr), ec2.Port.tcp(8443));
-		securityGroup.connections.allowFrom(ec2.Peer.ipv4(props.allowInboundCidr), ec2.Port.udp(8443));
-		// VNC
-		securityGroup.connections.allowFrom(ec2.Peer.ipv4(props.allowInboundCidr), ec2.Port.tcp(1194));
-		securityGroup.connections.allowFrom(ec2.Peer.ipv4(props.allowInboundCidr), ec2.Port.udp(1194));
 
 		const bucket = new s3.Bucket(this, 'ec2gamingBucket', {
 			bucketName: `ec2gaming-${props?.env?.account}`

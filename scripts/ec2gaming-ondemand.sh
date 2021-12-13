@@ -35,15 +35,6 @@ fi
 sed "s/BUCKET/$BUCKET/g;s/USERNAME/$USERNAME/g;s/PASSWORD/$PASSWORD/g" ec2gaming.bat.template > ../ec2gaming.bat
 echo "$BUCKET"
 
-PROFILE_NAME="ec2gaming"
-echo -n "Looking for instance profile... "
-if ! aws iam get-instance-profile --instance-profile-name ec2gaming &> /dev/null; then
-  echo -n "not found. Exiting."
-  exit 1
-fi
-INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name ec2gaming | jq -r '.InstanceProfile.Arn')
-echo "$INSTANCE_PROFILE_ARN"
-
 echo -n "Creating instance... "
 INSTANCE_ID=$(aws ec2 run-instances --launch-template LaunchTemplateName=ec2gaming --key-name $KEY_NAME --image-id $AMI_ID | jq --raw-output '.Instances[0].InstanceId')
 echo "$INSTANCE_ID"

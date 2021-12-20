@@ -87,9 +87,9 @@ export class Ec2GamingStack extends Stack {
 							"iam:AddRoleToInstanceProfile"
 						],
 						"Resource": [
-							"arn:aws:iam:::role/ec2gaming",
-							"arn:aws:iam:::instance-profile/ec2gaming",
-							"arn:aws:iam:::user/*",
+							`arn:aws:iam::${props.env?.account}:role/ec2gaming",
+							"arn:aws:iam::${props.env?.account}:instance-profile/ec2gaming",
+							"arn:aws:iam::${props.env?.account}:user/*",
 							"arn:aws:s3:::*/*"
 						]
 					},

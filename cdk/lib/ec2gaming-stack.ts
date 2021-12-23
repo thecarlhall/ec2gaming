@@ -1,7 +1,7 @@
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import { Group, Policy, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps, Tags } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export interface Ec2GamingProps extends StackProps {
@@ -87,9 +87,9 @@ export class Ec2GamingStack extends Stack {
 							"iam:AddRoleToInstanceProfile"
 						],
 						"Resource": [
-							`arn:aws:iam::${props.env?.account}:role/ec2gaming",
-							"arn:aws:iam::${props.env?.account}:instance-profile/ec2gaming",
-							"arn:aws:iam::${props.env?.account}:user/*",
+							`arn:aws:iam::${props.env?.account}:role/ec2gaming`,
+							`arn:aws:iam::${props.env?.account}:instance-profile/ec2gaming`,
+							`arn:aws:iam::${props.env?.account}:user/*`,
 							"arn:aws:s3:::*/*"
 						]
 					},
@@ -130,5 +130,6 @@ export class Ec2GamingStack extends Stack {
 				]
 			})
 		}));
+		Tags.of(this).add("project", "ec2gaming");
 	}
 }

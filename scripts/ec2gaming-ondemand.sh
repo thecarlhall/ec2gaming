@@ -36,7 +36,7 @@ sed "s/BUCKET/$BUCKET/g;s/USERNAME/$USERNAME/g;s/PASSWORD/$PASSWORD/g" ec2gaming
 echo "$BUCKET"
 
 echo -n "Creating instance... "
-INSTANCE_ID=$(aws ec2 run-instances --launch-template LaunchTemplateName=ec2gaming --key-name $KEY_NAME --image-id $AMI_ID | jq --raw-output '.Instances[0].InstanceId')
+INSTANCE_ID=$(aws ec2 run-instances --launch-template LaunchTemplateName=ec2gaming,Version=\$Latest --key-name $KEY_NAME --image-id $AMI_ID | jq --raw-output '.Instances[0].InstanceId')
 echo "$INSTANCE_ID"
 
 echo -n "Waiting for instance IP... "

@@ -19,7 +19,21 @@ fi
 
 # Create an AMI from the existing instance (so we can restore it next time)
 echo -n "Starting AMI creation... "
-AMI_ID=$( aws ec2 create-image --instance-id "$INSTANCE_ID" --name "ec2gaming" | jq --raw-output '.ImageId' )
+AMI_ID=$(aws ec2 create-image --instance-id "$INSTANCE_ID" --name "ec2gaming" --tag-specifications "
+	[{
+		\"ResourceType\": \"image\",
+		\"Tags\": [{
+			\"Key\": \"project\",
+			\"Value\": \"ec2gaming\"
+		}]
+	},{
+		\"ResourceType\": \"snapshot\",
+		\"Tags\": [{
+			\"Key\": \"project\",
+			\"Value\": \"ec2gaming\"
+		}]
+	}]
+"| jq --raw-output '.ImageId')
 echo "$AMI_ID"
 
 echo "Waiting for AMI to be created..."

@@ -20,7 +20,4 @@ new Ec2GamingStack(app, "ec2gaming", {
 		account: ACCOUNT_ID,
 		region: REGION
 	},
-	tags: {
-		"project": "ec2gaming"
-	}
 });

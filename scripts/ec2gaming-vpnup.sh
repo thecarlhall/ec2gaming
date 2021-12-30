@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+if [[ -z "$VPN_CLIENT" || "$VPN_CLIENT" == "NONE" ]]; then
+  exit 0
+fi
+
 source "$(dirname "$0")/ec2gaming.header"
 
 echo "Connecting VPN (you may see an authentication prompt)... "

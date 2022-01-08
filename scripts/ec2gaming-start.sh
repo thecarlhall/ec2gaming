@@ -107,6 +107,6 @@ if [ "$BOOTSTRAP" -eq "1" ]; then
 else
   ./ec2gaming-vpnup.sh
 
-  echo "Starting Steam..."
-  open steam://
+  echo "Starting Parsec..."
+  open parsec://
 fi

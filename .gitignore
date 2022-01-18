@@ -7,3 +7,11 @@ scripts/ec2gaming.rdp
 
 tags
 *.pem
+
+## terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars

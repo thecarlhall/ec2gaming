@@ -141,10 +141,13 @@ resource "aws_launch_template" "ec2gaming" {
         name = aws_iam_instance_profile.ec2gaming.name
     }
 
-    tag_specifications {
-        resource_type = "instance,volume"
-        tags = {
-            project = "ec2gaming"
+    dynamic "tag_specifications" {
+        for_each = toset([ "instance", "volume" ])
+        content {
+            resource_type = tag_specifications.key
+            tags = {
+                project = "ec2gaming"
+            }
         }
     }
 }

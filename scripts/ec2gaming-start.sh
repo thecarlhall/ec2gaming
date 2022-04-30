@@ -83,6 +83,11 @@ SPOT_INSTANCE_ID=$(aws ec2 request-spot-instances --spot-price "$FINAL_SPOT_PRIC
   }" | jq --raw-output '.SpotInstanceRequests[0].SpotInstanceRequestId')
 echo "$SPOT_INSTANCE_ID"
 
+if [[ -z "$SPOT_INSTANCE_ID" ]]; then
+  echo "No spot instance id? Check previous messages."
+  exit 1
+fi
+
 echo -n "Waiting for instance to be launched... "
 aws ec2 wait spot-instance-request-fulfilled --spot-instance-request-ids "$SPOT_INSTANCE_ID"
 

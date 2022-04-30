@@ -131,10 +131,9 @@ resource "aws_instance" "GamingInstance" {
     }
     iam_instance_profile = aws_iam_instance_profile.GamingInstanceProfile.id
     user_data = base64encode(<<UD
-$Bucket = "nvidia-gaming"
-
 msiexec.exe /i ${local.aws_cli_url}
 
+$Bucket = "nvidia-gaming"
 $Objects = Get-S3Object -BucketName $Bucket -KeyPrefix "windows/latest" -Region us-east-1
 foreach ($Object in $Objects) {
     $LocalFileName = $Object.Key
@@ -144,10 +143,13 @@ foreach ($Object in $Objects) {
     }
 }
 Expand-Archive $LocalFilePath -DestinationPath ${local.installation_files}\1_NVIDIA_drivers
+
 Invoke-WebRequest -Uri "${local.vb_audio_url}" -OutFile ${local.local_temp}\VbAudio.zip
 Expand-Archive "${local.local_temp}\VbAudio.zip" -DestinationPath ${local.installation_files}\2_VbAudio
+
 Invoke-WebRequest -Uri "${local.nvfbc_url}" -OutFile ${local.local_temp}\NvFBCEnable.zip
 Expand-Archive "${local.local_temp}\NvFBCEnable.zip" -DestinationPath ${local.installation_files}\3_NvFBCEnable
+
 Invoke-WebRequest -Uri "${local.parsec_url}" -OutFile ${local.installation_files}\4_parsec-windows.exe
 'reg add "HKLM\SOFTWARE\NVIDIA Corporation\Global" /v vGamingMarketplace /t REG_DWORD /d 2' >> ${local.installation_files}\5_update_registry.ps1
 Invoke-WebRequest -Uri "${local.grid_sw_cert_url}" -OutFile "$Env:PUBLIC\Documents\GridSwCert.txt"

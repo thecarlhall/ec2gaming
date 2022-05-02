@@ -171,8 +171,10 @@ UD
 
     provisioner "file" {
         content = <<-PS
-            PowerShell -Command "Set-ExecutionPolicy Unrestricted" >> ${local.installation_files}\StartupLog.txt" 2>&1
-            PowerShell -windowstyle hidden ${local.installation_files}\init-local-storage.ps1 >> ${local.installation_files}\StartupLog.txt" 2>&1
+            PowerShell -Command "Set-ExecutionPolicy Unrestricted" >> ${local.installation_files}\StartupLog.txt 2>&1
+            PowerShell -windowstyle hidden ${local.installation_files}\init-local-storage.ps1 >> ${local.installation_files}\StartupLog.txt 2>&1
+            PowerShell -windowstyle hidden ${local.installation_files}\metadata-routes.ps1 >> ${local.installation_files}\StartupLog.txt 2>&1
+            PowerShell -windowstyle hidden ${local.installation_files}\sync-from-s3.ps1
         PS
         destination = "${local.startup_folder}\\InitLocalStorage.cmd"
     }

@@ -1,0 +1,264 @@
+{
+  "Parameters": {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+  "Resources": {
+    "ec2gamingSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow remote access",
+        "GroupName": "ec2gaming",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:3389",
+            "FromPort": 3389,
+            "IpProtocol": "tcp",
+            "ToPort": 3389
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "ec2gaming"
+          }
+        ],
+        "VpcId": { "Ref": "VpcId" }
+      }
+    },
+    "ec2gamingBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Sub": "ec2gaming-${AWS::AccountId}"
+        },
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "ec2gaming"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "ec2gamingRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyName": "ec2gaming",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:ListBucket",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "ec2gamingBucket",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Fn::GetAtt": [
+                            "ec2gamingBucket",
+                            "Arn"
+                          ]
+                        },
+                        "/*"
+                      ]
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            }
+          },
+          {
+            "PolicyName": "ec2gaming.GraphicsDriverS3Access",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:ListBucket",
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:s3:::nvidia-gaming"
+                },
+                {
+                  "Action": "s3:GetObject",
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:s3:::nvidia-gaming/*"
+                }
+              ],
+              "Version": "2012-10-17"
+            }
+          }
+        ],
+        "RoleName": "ec2gaming",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "ec2gaming"
+          }
+        ]
+      }
+    },
+    "ec2gamingTemplateProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "ec2gamingRole"
+          }
+        ]
+      }
+    },
+    "ec2gamingLaunch": {
+      "Type": "AWS::EC2::LaunchTemplate",
+      "Properties": {
+        "LaunchTemplateName": "ec2gaming",
+        "LaunchTemplateData": {
+          "IamInstanceProfile": {
+            "Arn": {
+              "Fn::GetAtt": [
+                "ec2gamingTemplateProfile",
+                "Arn"
+              ]
+            }
+          },
+          "InstanceType": "g4dn.xlarge",
+          "KeyName": { "Ref": "KeyName" },
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "ec2gamingSecurityGroup",
+                "GroupId"
+              ]
+            }
+          ],
+          "TagSpecifications": [
+            {
+              "ResourceType": "instance",
+              "Tags": [
+                {
+                  "Key": "project",
+                  "Value": "ec2gaming"
+                }
+              ]
+            },
+            {
+              "ResourceType": "volume",
+              "Tags": [
+                {
+                  "Key": "project",
+                  "Value": "ec2gaming"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "ec2gamingGroup": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": "ec2gaming",
+        "Policies": [
+          {
+            "PolicyName": "ec2gamingPolicy",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "iam:CreateInstanceProfile",
+                    "s3:GetObject",
+                    "iam:PassRole",
+                    "iam:GetInstanceProfile",
+                    "iam:PutRolePolicy",
+                    "iam:GetUser",
+                    "iam:AddRoleToInstanceProfile"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    "arn:aws:iam::031971146660:role/ec2gaming",
+                    "arn:aws:iam::031971146660:instance-profile/ec2gaming",
+                    "arn:aws:iam::031971146660:user/*",
+                    "arn:aws:s3:::*/*"
+                  ]
+                },
+                {
+                  "Action": [
+                    "s3:CreateBucket",
+                    "s3:ListBucket"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:s3:::*"
+                },
+                {
+                  "Action": [
+                    "ec2:RebootInstances",
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:DeregisterImage",
+                    "ec2:DeleteSnapshot",
+                    "ec2:DescribeInstances",
+                    "ec2:TerminateInstances",
+                    "ec2:RequestSpotInstances",
+                    "ec2:CreateKeyPair",
+                    "ec2:CreateTags",
+                    "ec2:CreateImage",
+                    "ec2:RunInstances",
+                    "ec2:DescribeSpotInstanceRequests",
+                    "ec2:DescribeSecurityGroups",
+                    "ec2:DescribeSpotPriceHistory",
+                    "ec2:DescribeImages",
+                    "ec2:CancelSpotInstanceRequests",
+                    "ec2:CreateSecurityGroup",
+                    "sts:DecodeAuthorizationMessage"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ],
+              "Version": "2012-10-17"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

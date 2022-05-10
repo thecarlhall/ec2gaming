@@ -18,14 +18,22 @@ Mostly minor additions and changes to help my workflow. Check the commit log for
 # Before you begin
 
 ~~Follow the [first time configuration](https://github.com/DanielThomas/ec2gaming/wiki/First-time-configuration) steps. They help you setup the tools, and streamline creation of your personalized AMI.~~
+
+Borrow an AMI from someone or build your own. Once you have one, you don't need to create new ones manually, but you should update and take new snapshots periodically (`ec2gaming snapshot` will destroy old snapshots and create new ones).
+
+**Create an AMI from scratch**
 Use [the `create-ami` folder](https://github.com/thecarlhall/ec2gaming/tree/master/create-ami) to create your AMI. After taking a snapshot, this stack can/should be destroyed.
+
+**Setup Baseline Resources for Gaming**
+1. Create an EC2 KeyPair and same the PEM file.
+2. Use [ec2gaming.template.json](https://github.com/thecarlhall/ec2gaming/blob/master/ec2gaming.template.json) to create a CloudFormation stack with resources to be reused between gaming sessions. The `ec2gaming` scripts have checks for existing resources (security group, S3 bucket, etc). `ec2gaming start` will create these for you, but I prefer to manage them as a CloudFormation stack.
 
 # Gaming!
 
-- Run `ec2gaming ondemand` (for on-demand) or `ec2gaming start` (for spot). The instance, VPN and Steam will automatically start
-- Open Parsec and wait for server to show up.
-- Enjoy!
-- When you're done, run `ec2gaming stop` (stops vpn and terminates instance) or `ec2gaming terminate`.
+1. Run `ec2gaming ondemand` (for on-demand) or `ec2gaming start` (for spot, good luck!). The instance, VPN and Steam will automatically start
+2. Open Parsec and wait for server to show up.
+3. Enjoy!
+4. **The instance will run forever if you don't kill it thus charging you a lot.** When you're done, run `ec2gaming stop` (stops vpn and terminates instance) or `ec2gaming terminate`.
 
 # Help
 

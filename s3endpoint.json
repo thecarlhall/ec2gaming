@@ -1,0 +1,21 @@
+{
+    "Parameters": {
+        "VpcId": {
+            "Type": "AWS::EC2::VPC::Id"
+        },
+        "RouteTableId": {
+            "Type": "String",
+            "Description": "The route table that the VPC endpoint will add routes modifications."
+        }
+    },
+    "Resources": {
+        "S3VpcEndpoint": {
+            "Type": "AWS::EC2::VPCEndpoint",
+            "Properties": {
+                "RouteTableIds": [ { "Ref": "RouteTableId" } ],
+                "ServiceName": { "Fn::Sub": "com.amazonaws.${AWS::Region}.s3" },
+                "VpcId": { "Ref": "VpcId" }
+            }
+        }
+    }
+}

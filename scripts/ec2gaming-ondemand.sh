@@ -37,6 +37,7 @@ echo "$BUCKET"
 
 echo -n "Creating instance... "
 INSTANCE_ID=$(aws ec2 run-instances --launch-template LaunchTemplateName=ec2gaming,Version=\$Latest --key-name $KEY_NAME --image-id $AMI_ID | jq --raw-output '.Instances[0].InstanceId')
+export INSTANCE_ID
 echo "$INSTANCE_ID"
 
 echo -n "Waiting for instance IP... "

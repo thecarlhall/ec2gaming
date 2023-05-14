@@ -69,7 +69,7 @@ INSTANCE_PROFILE_ARN=$(aws iam get-instance-profile --instance-profile-name ec2g
 echo "$INSTANCE_PROFILE_ARN"
 
 echo -n "Creating spot instance request... "
-SPOT_INSTANCE_ID=$(aws ec2 request-spot-instances --spot-price "$FINAL_SPOT_PRICE" --launch-specification "
+SPOT_INSTANCE_ID=$(aws ec2 request-spot-instances --spot-price "$FINAL_SPOT_PRICE" --instance-count 1 --launch-specification "
   {
     \"SecurityGroupIds\": [\"$EC2_SECURITY_GROUP_ID\"],
     \"ImageId\": \"$AMI_ID\",
@@ -92,6 +92,7 @@ echo -n "Waiting for instance to be launched... "
 aws ec2 wait spot-instance-request-fulfilled --spot-instance-request-ids "$SPOT_INSTANCE_ID"
 
 INSTANCE_ID=$(aws ec2 describe-spot-instance-requests --spot-instance-request-ids "$SPOT_INSTANCE_ID" | jq --raw-output '.SpotInstanceRequests[0].InstanceId')
+export INSTANCE_ID
 echo "$INSTANCE_ID"
 
 echo -n "Removing the spot instance request... "
